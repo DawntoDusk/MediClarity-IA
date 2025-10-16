@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medication Logs</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    * {
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #faf2ff;
+    }
+
+    .form-container {
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+    }
+
+    .main-section {
+      margin-top: 30px;
+    }
+
+    h3 {
+      color: rgb(167, 60, 184);
+    }
+    .custom-add-button, .custom-display-button {
+      top: 70%;
+      left: 50%;
+      background-color: #ff914d;
+      border: 0.16em solid #ff914d;
+      color: rgb(255, 255, 255);
+      border-radius: 15rem;
+    }
+
+    .custom-add-button:hover, .custom-display-button:hover {
+      background-color:#9c3fb9;
+      color:rgb(251,243,251);
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="text-center mt-4 p-5 bg-white rounded">
+      <h1 style="color:rgb(167,60,184);"><img src="assets/medsLogo.png" alt="Logo" style="max-width: 15% "> Medication Log</h1>
+    </div>
+
+    <div class="navcontent mt-3">
+      <ul class="nav nav-tabs nav-justified">
+        <li class="nav-item">
+          <a class="nav-link" href="home.html" style="color:rgb(167,60,184);">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="log.html" style="background-color: rgb(167,60,184); color:#ffffff;">Logs</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Section for Form and List -->
+    <div class="row main-section">
+      <!-- Left side (Form) -->
+      <div class="col-md-6">
+        <div class="form-container">
+          <h3>Add Medicine</h3>
+          <form id="medicationForm">
+            <div class="mb-3">
+              <label for="medicineName" class="form-label">Medicine Name:</label>
+              <input type="text" class="form-control" id="medicineName" name="medicineName" required>
+            </div>
+            <div class="mb-3">
+              <label for="dosage" class="form-label">Dosage (ml/mg):</label>
+              <input type="number" class="form-control" id="dosage" name="dosage" required>
+            </div>
+            <div class="mb-3">
+              <label for="frequency" class="form-label">How often do you take this medicine:</label>
+              <select class="form-control" id="frequency" name="frequency" required>
+                <option value="" selected disabled>Select Frequency</option>
+                <option value="Once a day">Once a day</option>
+                <option value="Twice a day">Twice a day</option>
+                <option value="Three times a day">Three times a day</option>
+                <option value="Weekly">Weekly</option>
+                <option value="By Necessity">By Necessity</option>
+              </select>
+            </div>
+            
+            <div class="mb-3" id="time-slots" style="display: none;">
+              <!-- Time slots will be added here dynamically -->
+            </div>
+            
+            
+            
+            <button type="submit" class="btn custom-add-button">Add Medicine</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right side (Display Medicines) -->
+      <div class="col-md-6">
+        <div>
+          <h3>View Medicines</h3>
+          <button class="btn custom-display-button mb-3" id="displayButton" >Display Medicines</button>
+          <ul id="medicineList" class="list-group">
+            <!-- Medicines will be displayed here -->
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap modal for success message -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Success</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Medicine added successfully!
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+
+    document.getElementById('medicationForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent default form submission
+
+      const medicineName = document.getElementById('medicineName').value;
+      const dosage = document.getElementById('dosage').value;
+      const timeSlots = [];
+      document.querySelectorAll('.time-input-group input[type="time"]').forEach(input => {
+        timeSlots.push(input.value);
+      });
+      const time = timeSlots.join(', ');  // Join times as a comma-separated string
+      const frequency = document.getElementById('frequency').value;
+
+      // Send the form data to the server using Fetch API
+      const response = await fetch('/add-medication', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          medicineName: medicineName,
+          dosage: dosage,
+          time: time,
+          frequency: frequency
+        })
+      });
+
+      if (response.ok) {
+        // Clear form fields after submission
+        document.getElementById('medicationForm').reset();
+
+        // Optionally, clear dynamically created time slots
+        const timeSlotsContainer = document.getElementById('time-slots');
+        timeSlotsContainer.innerHTML = '';
+        timeSlotsContainer.style.display = 'none'; // Hide the time slots section
+
+        // Show the success modal
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+      } else {
+        alert('Error adding medicine. Please try again.');
+      }
+    });
+
+
+    // Display medicines on button click
+    document.getElementById('displayButton').addEventListener('click', async function() {
+      const response = await fetch('/get-medicines');
+      const medicines = await response.json();
+
+      const medicineList = document.getElementById('medicineList');
+      medicineList.innerHTML = ''; // Clear the list first
+
+      medicines.forEach((medicine) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        
+        // Ensure you display all the required fields, including time and frequency
+        listItem.textContent = `${medicine.name}: ${medicine.dosage}ml - ${medicine.time} - ${medicine.frequency}`;
+
+        // Create trash icon button
+        const trashIcon = document.createElement('i');
+        trashIcon.classList.add('far', 'fa-trash-alt', 'text-info', 'delete-icon');
+        trashIcon.style.cursor = 'pointer';
+
+        // Add delete functionality
+        trashIcon.addEventListener('click', async function() {
+          const deleteConfirmed = confirm(`Are you sure you want to delete ${medicine.name}?`);
+          if (deleteConfirmed) {
+            // Send a request to the server to delete the medicine
+            const deleteResponse = await fetch(`/delete-medicine?name=${encodeURIComponent(medicine.name)}`, {
+              method: 'DELETE'
+            });
+
+            if (deleteResponse.ok) {
+              // Remove the list item from the UI
+              listItem.remove();
+            } else {
+              alert('Error deleting medicine.');
+            }
+          }
+        });
+
+        listItem.appendChild(trashIcon);
+        medicineList.appendChild(listItem);
+      });
+    });
+
+    document.getElementById('frequency').addEventListener('change', function() {
+      const frequency = this.value;
+      const timeSlotsContainer = document.getElementById('time-slots');
+
+      // Clear any existing time slots
+      timeSlotsContainer.innerHTML = '';
+
+      // Determine the number of time slots based on frequency
+      let numberOfSlots;
+      switch(frequency) {
+        case 'Once a day':
+          numberOfSlots = 1;
+          break;
+        case 'Twice a day':
+          numberOfSlots = 2;
+          break;
+        case 'Three times a day':
+          numberOfSlots = 3;
+          break;
+        case 'Weekly':
+          // Save as "weekly" without time input
+          timeSlotsContainer.innerHTML = '<p>This medicine is taken weekly.</p>';
+          timeSlotsContainer.style.display = 'block'; // Show the time slots container
+          return; // Exit the function
+        case 'By Necessity':
+          // Save as "by necessity" without time input
+          timeSlotsContainer.innerHTML = '<p>This medicine is taken by necessity.</p>';
+          timeSlotsContainer.style.display = 'block'; // Show the time slots container
+          return; // Exit the function
+        default:
+          numberOfSlots = 1;
+      }
+
+      // Dynamically create time slots for other frequencies
+      for (let i = 0; i < numberOfSlots; i++) {
+        const timeLabel = document.createElement('label');
+        timeLabel.textContent = `When do you take this medicine (Slot ${i + 1}):`;
+        timeLabel.classList.add('form-label');
+
+        const timeInputGroup = document.createElement('div');
+        timeInputGroup.classList.add('time-input-group', 'mb-2');
+
+        // Time input field
+        const timeInput = document.createElement('input');
+        timeInput.type = 'time';
+        timeInput.classList.add('form-control');
+        timeInput.name = `timeSlot${i + 1}`;
+        timeInputGroup.appendChild(timeInput);
+
+        // Append time input group to the time slots container
+        timeSlotsContainer.appendChild(timeLabel);
+        timeSlotsContainer.appendChild(timeInputGroup);
+      }
+
+      // Show the time slots container after frequency is selected
+      timeSlotsContainer.style.display = 'block';
+    });
+
+
+  </script>
+
+</body>
+
+</html>

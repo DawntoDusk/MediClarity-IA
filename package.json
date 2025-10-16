@@ -1,0 +1,33 @@
+{
+  "name": "MediClarity-IA",
+  "version": "1.0.0",
+  "description": "An iOS app that allows you to track your medications, and scan products for harmful ingredients or ingredients you are allergic to. ## Success Criteria: 1. The application should be able to access the camera 2. The application should be able to scan and identify text 3. The application should be able to store data of the user’s allergies 4. The application should be able to notify user if any ingredients match those of their allergies or harmful ingredients 5. The application should be able to save username and password information 6. The application should have a functional login page 7. The application should have a database with information of FDA’s not-approved substances 8. The application should have a medication logger, where user can log all of their medications 9. The application should be able to have user input times when to take medications, Should be able to have daily repeated schedules of medication logs 10. The application should allow user to “check off” taken medications (like a to-do list)",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"node server.js\" \"python app.py\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DawntoDusk/MediClarity-IA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DawntoDusk/MediClarity-IA/issues"
+  },
+  "homepage": "https://github.com/DawntoDusk/MediClarity-IA#readme",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "csv-writer": "^1.6.0",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "form-data": "^4.0.1",
+    "multer": "^1.4.5-lts.1",
+    "tesseract.js": "^6.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

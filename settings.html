@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <link rel="stylesheet" href="/style.css" />
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<style>
+    *{
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+    .image-text-button {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .image-text-button img {
+        margin-right: 10px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .image-text-button:hover {
+        background-color: rgb(167,60,184);
+    }
+</style>
+
+<div class="main">
+<body style="background-color: #faf2ff;">
+<div class="container mt-3">
+    <div class="mt-4 p-5 bg-white rounded" style=" padding:25px ; text-align:center; color:rgb(167,60,184);">
+    <h1> Settings</h1> 
+    </div>
+
+    <div class="navcontent" style="padding-top: 25px; font-size: 20px; ">
+        <ul class="nav nav-tabs nav-justified">
+          <li class="nav-item">
+            <a class="nav-link" href="home.html" style="color:rgb(167,60,184);">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="log.html" style="color:rgb(167,60,184);">Logs</a>
+          </li>
+        </ul>
+      </div>
+</body>
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">Account Details</h4>
+    <p class="card-text" id="get-account">Name : 
+    
+    </p>
+  </div>
+      <br>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // Fetch the account information from the server
+      const response = await fetch('/display-account');
+      
+      // Check for any errors in the response
+      if (!response.ok) {
+        throw new Error('Error fetching account data');
+      }
+
+      const info = await response.json();
+
+      // Check if the response contains an error
+      if (info.error) {
+        document.getElementById('get-account').innerHTML = `<p>Error: ${info.error}</p>`;
+        return;
+      }
+
+      // Populate the account details
+      const accountDetails = `
+        <p><strong>First Name:</strong> ${info.userFirstName || 'N/A'}</p>
+        <p><strong>Last Name:</strong> ${info.lastName || 'N/A'}</p>
+        <p><strong>Email Address:</strong> ${info.emailAddress || 'N/A'}</p>
+        <p><strong>Password:</strong> ${info.userPassword || 'N/A'}</p>
+      `;
+
+      // Inject the account details into the DOM
+      document.getElementById('get-account').innerHTML = accountDetails;
+
+    } catch (error) {
+      console.error('Error fetching account information:', error);
+      document.getElementById('get-account').innerHTML = `<p>Error loading account information</p>`;
+    }
+  });
+</script>
+
+</div>
+
+<div>
+  <button id="continue" onclick="window.location.href='/index.html';">Log Out</button>
+</div>
+</html>
