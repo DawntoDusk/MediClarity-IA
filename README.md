@@ -1,6 +1,6 @@
 # MediClarity - IB CS HL IA
 ## Description
-An iOS app that allows you to track your medications, and scan products for harmful ingredients or ingredients you are allergic to.
+An website that allows you to track your medications, and scan products for harmful ingredients or ingredients you are allergic to.
 ## Success Criteria:
 1. The application should be able to access the camera
 2. The application should be able to scan and identify text
