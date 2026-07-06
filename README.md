@@ -1,4 +1,4 @@
-# MediClarity - IB CS HL IA
+# MediClarity 
 ## Description
 A website that allows you to track your medications, and scan products for harmful ingredients or ingredients you are allergic to.
 ## Success Criteria:
